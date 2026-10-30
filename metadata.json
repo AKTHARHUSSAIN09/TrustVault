@@ -1,0 +1,6 @@
+{
+  "name": "AICTE FDR Management System",
+  "description": "Centralized Security Deposit and Fixed Deposit Receipt (FDR) lifecycle management portal for AICTE and AICTE-approved technical institutions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

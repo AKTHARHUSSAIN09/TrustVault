@@ -1,0 +1,386 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user account and role assignment in AICTE FDR Management System",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "role": {
+          "type": "string",
+          "enum": [
+            "SUPER_ADMIN",
+            "AICTE_ADMIN",
+            "AICTE_SCRUTINY_OFFICER",
+            "SENIOR_APPROVING_OFFICER",
+            "INSTITUTION_ADMIN"
+          ]
+        },
+        "institutionId": { "type": "string", "maxLength": 128 },
+        "institutionName": { "type": "string", "maxLength": 256 },
+        "department": { "type": "string", "maxLength": 128 },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "SUSPENDED", "PENDING"]
+        },
+        "orgId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "uid",
+        "email",
+        "displayName",
+        "role",
+        "institutionId",
+        "institutionName",
+        "department",
+        "status",
+        "orgId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Institution": {
+      "title": "Institution",
+      "description": "AICTE-approved technical institution registered in the FDR portal",
+      "type": "object",
+      "properties": {
+        "institutionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "aictePermanentId": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 256 },
+        "state": { "type": "string", "maxLength": 128 },
+        "region": {
+          "type": "string",
+          "enum": [
+            "NORTH",
+            "SOUTH",
+            "EAST",
+            "WEST",
+            "CENTRAL",
+            "SOUTH_WEST",
+            "NORTH_WEST",
+            "SOUTH_CENTRAL"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "ENGINEERING",
+            "MANAGEMENT",
+            "PHARMACY",
+            "ARCHITECTURE",
+            "MCA",
+            "HOTEL_MANAGEMENT"
+          ]
+        },
+        "institutionType": {
+          "type": "string",
+          "enum": [
+            "PRIVATE_SELF_FINANCED",
+            "DEEMED_UNIVERSITY",
+            "GOVT_AIDED",
+            "AUTONOMOUS"
+          ]
+        },
+        "contactEmail": { "type": "string", "maxLength": 256 },
+        "contactPhone": { "type": "string", "maxLength": 32 },
+        "address": { "type": "string", "maxLength": 512 },
+        "complianceStatus": {
+          "type": "string",
+          "enum": ["COMPLIANT", "AT_RISK", "NON_COMPLIANT", "PENDING_SCRUTINY"]
+        },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "orgId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "institutionId",
+        "aictePermanentId",
+        "name",
+        "state",
+        "region",
+        "category",
+        "institutionType",
+        "contactEmail",
+        "contactPhone",
+        "address",
+        "complianceStatus",
+        "ownerUid",
+        "orgId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "FdrRecord": {
+      "title": "FdrRecord",
+      "description": "Fixed Deposit Receipt (FDR) statutory security deposit record",
+      "type": "object",
+      "properties": {
+        "fdrId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "fdrNumber": { "type": "string", "maxLength": 64 },
+        "institutionId": { "type": "string", "maxLength": 128 },
+        "institutionName": { "type": "string", "maxLength": 256 },
+        "aictePermanentId": { "type": "string", "maxLength": 64 },
+        "bankName": { "type": "string", "maxLength": 256 },
+        "branchName": { "type": "string", "maxLength": 256 },
+        "ifscCode": { "type": "string", "maxLength": 32 },
+        "principalAmount": { "type": "number" },
+        "maturityAmount": { "type": "number" },
+        "interestRate": { "type": "number" },
+        "issueDate": { "type": "string", "maxLength": 32 },
+        "maturityDate": { "type": "string", "maxLength": 32 },
+        "programCategory": { "type": "string", "maxLength": 128 },
+        "jointHolderStatus": {
+          "type": "string",
+          "enum": ["JOINT_WITH_AICTE", "SOLE_INSTITUTION", "UNDER_LIEN_VERIFICATION"]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "SUBMITTED",
+            "UNDER_SCRUTINY",
+            "VERIFIED_ACTIVE",
+            "DISCREPANCY_RAISED",
+            "MATURING_SOON",
+            "MATURED",
+            "RENEWAL_INITIATED",
+            "RELEASE_REQUESTED",
+            "RELEASED"
+          ]
+        },
+        "documentName": { "type": "string", "maxLength": 256 },
+        "documentUrl": { "type": "string", "maxLength": 1024 },
+        "remarks": { "type": "string", "maxLength": 1024 },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "orgId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "fdrId",
+        "fdrNumber",
+        "institutionId",
+        "institutionName",
+        "aictePermanentId",
+        "bankName",
+        "branchName",
+        "ifscCode",
+        "principalAmount",
+        "maturityAmount",
+        "interestRate",
+        "issueDate",
+        "maturityDate",
+        "programCategory",
+        "jointHolderStatus",
+        "status",
+        "documentName",
+        "documentUrl",
+        "remarks",
+        "ownerUid",
+        "orgId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "WorkflowSubmission": {
+      "title": "WorkflowSubmission",
+      "description": "FDR submission, renewal, replacement, release/refund request, or discrepancy resolution record",
+      "type": "object",
+      "properties": {
+        "submissionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "referenceNo": { "type": "string", "maxLength": 64 },
+        "submissionType": {
+          "type": "string",
+          "enum": [
+            "NEW_FDR",
+            "RENEWAL",
+            "REPLACEMENT",
+            "RELEASE_REFUND",
+            "DISCREPANCY_RESPONSE"
+          ]
+        },
+        "fdrId": { "type": "string", "maxLength": 128 },
+        "fdrNumber": { "type": "string", "maxLength": 64 },
+        "institutionId": { "type": "string", "maxLength": 128 },
+        "institutionName": { "type": "string", "maxLength": 256 },
+        "amount": { "type": "number" },
+        "bankName": { "type": "string", "maxLength": 256 },
+        "status": {
+          "type": "string",
+          "enum": [
+            "SUBMITTED",
+            "SCRUTINY_IN_PROGRESS",
+            "DISCREPANCY_FLAGGED",
+            "FORWARDED_TO_SENIOR",
+            "APPROVED",
+            "REJECTED"
+          ]
+        },
+        "assignedRole": {
+          "type": "string",
+          "enum": [
+            "AICTE_SCRUTINY_OFFICER",
+            "SENIOR_APPROVING_OFFICER",
+            "AICTE_ADMIN"
+          ]
+        },
+        "notes": { "type": "string", "maxLength": 1024 },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "orgId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "submissionId",
+        "referenceNo",
+        "submissionType",
+        "fdrId",
+        "fdrNumber",
+        "institutionId",
+        "institutionName",
+        "amount",
+        "bankName",
+        "status",
+        "assignedRole",
+        "notes",
+        "ownerUid",
+        "orgId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AuditLogEntry": {
+      "title": "AuditLogEntry",
+      "description": "Immutable statutory audit log entry for compliance and governance",
+      "type": "object",
+      "properties": {
+        "logId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "actorUid": { "type": "string", "maxLength": 128 },
+        "actorEmail": { "type": "string", "maxLength": 256 },
+        "actorRole": { "type": "string", "maxLength": 64 },
+        "action": { "type": "string", "maxLength": 128 },
+        "module": { "type": "string", "maxLength": 128 },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "summary": { "type": "string", "maxLength": 512 },
+        "orgId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "logId",
+        "actorUid",
+        "actorEmail",
+        "actorRole",
+        "action",
+        "module",
+        "targetId",
+        "summary",
+        "orgId",
+        "createdAt"
+      ]
+    },
+    "PortalNotification": {
+      "title": "PortalNotification",
+      "description": "System and workflow notification for AICTE officers and institutions",
+      "type": "object",
+      "properties": {
+        "notificationId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "maxLength": 256 },
+        "message": { "type": "string", "maxLength": 1024 },
+        "severity": {
+          "type": "string",
+          "enum": ["INFO", "WARNING", "CRITICAL", "SUCCESS"]
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "MATURITY_ALERT",
+            "SCRUTINY_UPDATE",
+            "DISCREPANCY",
+            "RELEASE_APPROVAL",
+            "SYSTEM"
+          ]
+        },
+        "targetRole": { "type": "string", "maxLength": 64 },
+        "recipientUid": { "type": "string", "maxLength": 128 },
+        "readStatus": { "type": "boolean" },
+        "orgId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "notificationId",
+        "title",
+        "message",
+        "severity",
+        "category",
+        "targetRole",
+        "recipientUid",
+        "readStatus",
+        "orgId",
+        "createdAt"
+      ]
+    },
+    "SystemConfiguration": {
+      "title": "SystemConfiguration",
+      "description": "Global AICTE FDR portal statutory parameters and SLA configuration",
+      "type": "object",
+      "properties": {
+        "configId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "maturityAlertWindowDays": { "type": "number" },
+        "defaultLockInYears": { "type": "number" },
+        "requireJointLienVerification": { "type": "boolean" },
+        "allowedBankCategories": { "type": "string", "maxLength": 256 },
+        "escalationSlaHours": { "type": "number" },
+        "portalMaintenanceBanner": { "type": "string", "maxLength": 512 },
+        "updatedByUid": { "type": "string", "maxLength": 128 },
+        "orgId": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "configId",
+        "maturityAlertWindowDays",
+        "defaultLockInYears",
+        "requireJointLienVerification",
+        "allowedBankCategories",
+        "escalationSlaHours",
+        "portalMaintenanceBanner",
+        "updatedByUid",
+        "orgId",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User accounts and role profiles"
+    },
+    "/institutions/{institutionId}": {
+      "schema": "Institution",
+      "description": "AICTE-approved technical institutions"
+    },
+    "/fdrs/{fdrId}": {
+      "schema": "FdrRecord",
+      "description": "Fixed Deposit Receipt (FDR) repository"
+    },
+    "/submissions/{submissionId}": {
+      "schema": "WorkflowSubmission",
+      "description": "FDR lifecycle workflow submissions (new, renewal, replacement, release, discrepancy)"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLogEntry",
+      "description": "Immutable statutory audit log entries"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "PortalNotification",
+      "description": "Portal alerts, escalations, and notifications"
+    },
+    "/systemConfig/{configId}": {
+      "schema": "SystemConfiguration",
+      "description": "System-wide statutory configuration settings"
+    }
+  }
+}

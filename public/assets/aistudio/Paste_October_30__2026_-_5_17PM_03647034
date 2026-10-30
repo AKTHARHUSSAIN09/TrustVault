@@ -1,0 +1,1138 @@
+
+PROJECT: AICTE SECURITY DEPOSIT / FDR MANAGEMENT SYSTEM
+
+IMPORTANT CONTEXT:
+
+The initial project foundation and application UI have already
+been created.
+
+Continue working on the EXISTING project.
+
+Do not recreate the application from scratch.
+Do not destroy or replace the existing architecture.
+Do not remove existing working components.
+Inspect the current codebase, identify the existing routes,
+components, database configuration and design system, and
+extend them.
+
+PROJECT OBJECTIVE:
+
+Transform the existing application into a complete,
+professional, highly interactive, fully functional prototype
+for managing Security Deposits and Fixed Deposit Receipts (FDRs)
+for AICTE and AICTE-approved technical institutions.
+
+This is a demonstration prototype.
+
+Mock data, simulated bank verification, simulated email
+notifications and simulated approval integrations are allowed.
+
+However, every visible feature must have working interactions.
+Buttons must perform meaningful actions.
+Forms must validate.
+Tables must support search and filtering.
+Status changes must update the application.
+Workflows must connect across modules.
+Changes must persist during the demonstration.
+
+Do not build a static dashboard or a collection of disconnected
+screens.
+
+==================================================
+1. DEVELOPMENT REQUIREMENTS
+==================================================
+
+Preserve the existing technology stack wherever possible.
+
+Use the existing:
+- React
+- TypeScript
+- Tailwind CSS
+- Node.js backend, if already configured
+- Existing authentication and database setup
+
+Use the currently configured database if available.
+
+If a backend integration is incomplete, implement a clean
+mock-data service layer with persistent browser storage
+for demonstration purposes.
+
+Use realistic seeded data.
+
+Separate mock services from business logic so that real APIs
+can replace simulated integrations later.
+
+Never expose API keys in frontend code.
+
+==================================================
+2. USER ROLES AND ACCESS
+==================================================
+
+Implement the following roles:
+
+1. SUPER ADMIN
+2. AICTE ADMIN
+3. SCRUTINY OFFICER
+4. SENIOR APPROVING OFFICER
+5. INSTITUTION ADMIN
+
+Provide a working demo role-switching mechanism in the
+development/demo environment.
+
+Each role must have its own appropriate dashboard and
+permissions.
+
+SUPER ADMIN:
+- Manage users.
+- Manage institutions.
+- Manage roles.
+- Configure system settings.
+- View all records.
+- View audit logs.
+
+AICTE ADMIN:
+- View all institution records.
+- Manage FDRs.
+- Assign verification tasks.
+- Review discrepancies.
+- Monitor maturity.
+- Manage renewals.
+- Review release/refund requests.
+- Generate reports.
+
+SCRUTINY OFFICER:
+- Review submitted FDRs.
+- Inspect uploaded documents.
+- Perform verification.
+- Record observations.
+- Identify discrepancies.
+- Request additional documents.
+- Forward cases for approval.
+
+SENIOR APPROVING OFFICER:
+- Review forwarded cases.
+- Review scrutiny observations.
+- Approve or reject eligible requests.
+- Review release/refund requests.
+- View approval history.
+
+INSTITUTION ADMIN:
+- View only their institution's data.
+- Submit new FDRs.
+- Upload documents.
+- View verification results.
+- Submit renewals.
+- Submit replacement FDRs.
+- Submit release/refund requests.
+- Track all submitted requests.
+- Receive notifications.
+
+All role restrictions must be reflected in navigation,
+screens and available actions.
+
+For the demo, role switching can be implemented through
+a clearly marked demo-user selector.
+
+==================================================
+3. INSTITUTION MANAGEMENT MODULE
+==================================================
+
+Build a complete institution management section.
+
+Display an institution directory with:
+
+- Institution ID
+- AICTE Permanent ID
+- Institution name
+- Institution type
+- State
+- District
+- Contact person
+- Email
+- Registration status
+- Total FDRs
+- Total deposit amount
+
+Features:
+
+- Search institutions.
+- Filter by state.
+- Filter by institution type.
+- Filter by registration status.
+- Sort table columns.
+- Pagination.
+- View institution profile.
+- Edit institution details.
+- Activate/deactivate institution.
+- View all associated FDRs.
+- View institution submission history.
+
+Create a detailed institution profile page containing
+institution information, FDR summary, documents,
+requests, notifications and activity history.
+
+Provide realistic demo institutions from different
+Indian states.
+
+==================================================
+4. FDR MANAGEMENT MODULE
+==================================================
+
+This is the central module of the application.
+
+Create a complete FDR repository.
+
+FDR TABLE COLUMNS:
+
+- FDR ID
+- Institution
+- AICTE Permanent ID
+- FDR Number
+- Issuing Bank
+- Deposit Amount
+- Issue Date
+- Maturity Date
+- Remaining Days
+- Verification Status
+- Administrative Status
+- Actions
+
+FDR STATUS CATEGORIES:
+
+- Draft
+- Submitted
+- Under Review
+- Verification Pending
+- Verified
+- Active
+- Discrepancy Found
+- Rejected
+- Expiring
+- Matured
+- Renewal Pending
+- Renewed
+- Release Requested
+- Released
+
+Use appropriate workflow-aware status transitions.
+Do not assign contradictory statuses simultaneously.
+
+FEATURES:
+
+- Global FDR search.
+- Search by FDR number.
+- Search by institution.
+- Search by bank.
+- Filter by status.
+- Filter by maturity date.
+- Filter by amount.
+- Filter by verification status.
+- Sort records.
+- Pagination.
+- View FDR details.
+- Edit permitted information.
+- View complete history.
+- Download associated documents.
+- View related renewal records.
+- View release/refund requests.
+
+Clicking an FDR must open a detailed FDR profile.
+
+The profile must contain:
+
+1. FDR information.
+2. Institution information.
+3. Bank details.
+4. Deposit information.
+5. Document section.
+6. Verification results.
+7. Discrepancies.
+8. Renewal history.
+9. Maturity timeline.
+10. Administrative observations.
+11. Activity history.
+
+==================================================
+5. NEW FDR SUBMISSION MODULE
+==================================================
+
+Build a polished multi-step FDR submission form.
+
+STEP 1: INSTITUTION INFORMATION
+
+- Institution name.
+- AICTE Permanent ID.
+- Institution address.
+- Institution representative.
+
+Automatically populate these fields from the selected
+institution in demo mode.
+
+STEP 2: FINANCIAL INSTRUMENT INFORMATION
+
+- FDR number.
+- Bank name.
+- Bank branch.
+- Deposit amount.
+- Issue date.
+- Maturity date.
+- Beneficiary/holder name.
+- Deposit category.
+- Reference number.
+- Remarks.
+
+STEP 3: DOCUMENT UPLOAD
+
+Support:
+- PDF.
+- JPG.
+- JPEG.
+- PNG.
+
+Allow multiple document uploads.
+
+Show:
+- Uploaded filename.
+- File type.
+- File size.
+- Upload progress.
+- Preview.
+- Remove document action.
+
+STEP 4: REVIEW AND SUBMIT
+
+Display all entered details.
+
+Validate required fields.
+
+Check that maturity date is later than issue date.
+
+Generate a unique FDR reference ID.
+
+Save the submission.
+
+Show a professional submission-success screen.
+
+The newly submitted FDR must immediately appear in
+the institution's FDR list and the AICTE repository.
+
+Add a demo mode for sample documents if no actual
+file is uploaded.
+
+==================================================
+6. DOCUMENT MANAGEMENT MODULE
+==================================================
+
+Create a centralized document management interface.
+
+Features:
+
+- View all submitted documents.
+- Search by FDR ID.
+- Filter by institution.
+- Filter by document type.
+- View PDF and image previews.
+- Download documents.
+- Display upload information.
+- Display upload date.
+- Display uploaded-by user.
+- Display verification status.
+- Maintain document versions.
+- Replace documents through a controlled action.
+- View previous document versions.
+
+Document categories:
+
+- Original FDR
+- Bank Confirmation
+- Deposit Certificate
+- Renewal Document
+- Replacement FDR
+- Release Supporting Document
+- Other Supporting Document
+
+For demo mode, provide sample document records and
+placeholder preview documents.
+
+==================================================
+7. GEMINI-POWERED DOCUMENT INTELLIGENCE
+==================================================
+
+Create an AI-assisted FDR document extraction and
+discrepancy detection interface.
+
+The module should be usable even if Gemini API access
+is unavailable.
+
+If Gemini API is configured:
+- Extract information from the uploaded FDR.
+- Return structured JSON.
+- Extract FDR number.
+- Extract bank name.
+- Extract branch.
+- Extract deposit amount.
+- Extract issue date.
+- Extract maturity date.
+- Extract holder/beneficiary.
+- Extract other available details.
+
+If Gemini is unavailable:
+- Use a clearly labelled simulated extraction service
+  with realistic sample extracted values.
+
+Do not silently pretend that mock results came from Gemini.
+
+COMPARISON INTERFACE:
+
+Display two panels:
+
+LEFT:
+Institution-submitted information.
+
+RIGHT:
+Document-extracted information.
+
+Compare:
+- FDR number.
+- Bank name.
+- Branch.
+- Amount.
+- Issue date.
+- Maturity date.
+- Beneficiary.
+
+Show:
+
+- Matching fields.
+- Mismatched fields.
+- Missing fields.
+- Unreadable fields.
+- Confidence indicators.
+
+Use green for matching fields.
+Use red for mismatches.
+Use amber for manual verification.
+
+Generate a verification report.
+
+Provide officer actions:
+
+- Mark as reviewed.
+- Confirm matching details.
+- Flag discrepancy.
+- Request clarification.
+- Forward for further scrutiny.
+- Record manual verification.
+
+IMPORTANT:
+
+AI document extraction is not proof of bank authenticity.
+
+Add a separate bank-verification status:
+NOT VERIFIED
+SIMULATED BANK CHECK
+BANK CONFIRMED
+BANK VERIFICATION FAILED
+MANUAL CONFIRMATION REQUIRED
+
+In demo mode, all simulated bank results must be
+clearly identified as simulated.
+
+==================================================
+8. BANK VERIFICATION SIMULATOR
+==================================================
+
+Create a demonstration interface for bank verification.
+
+Since real bank APIs are not available, implement
+a simulated bank verification service.
+
+Allow the officer to click:
+
+"Verify with Bank (Demo)"
+
+Show a realistic verification process.
+
+Display:
+
+- Bank name.
+- FDR number.
+- Deposit amount.
+- Issue date.
+- Maturity date.
+- Verification reference.
+- Simulated verification timestamp.
+- Result.
+
+Possible results:
+
+- Simulated match.
+- Simulated mismatch.
+- Unable to verify.
+- Manual verification required.
+
+Clearly display a DEMO / SIMULATED label.
+
+Never represent simulated bank responses as actual
+bank confirmation.
+
+==================================================
+9. DISCREPANCY MANAGEMENT MODULE
+==================================================
+
+Create a dedicated discrepancy management centre.
+
+Display:
+
+- Discrepancy ID.
+- FDR ID.
+- Institution.
+- Discrepancy type.
+- Severity.
+- Detection date.
+- Assigned officer.
+- Resolution status.
+
+Discrepancy types:
+
+- Amount mismatch.
+- FDR number mismatch.
+- Bank mismatch.
+- Maturity date mismatch.
+- Missing information.
+- Duplicate instrument.
+- Document unreadable.
+- Potential document anomaly.
+
+Severity:
+
+- Low.
+- Medium.
+- High.
+- Critical.
+
+Features:
+
+- Search.
+- Filter.
+- Assign officer.
+- Add observations.
+- Request clarification.
+- Mark under investigation.
+- Resolve discrepancy.
+- Reject submission with reason.
+- View resolution history.
+
+All discrepancy actions must update the FDR's
+associated verification workflow.
+
+==================================================
+10. MATURITY AND VALIDITY MONITORING
+==================================================
+
+Build a complete FDR maturity monitoring module.
+
+Create:
+
+- Maturity overview.
+- Expiring within 30 days.
+- Expiring within 15 days.
+- Expiring within 7 days.
+- Matured FDRs.
+- Overdue renewals.
+- Renewal pending.
+
+Display a maturity calendar.
+
+Display remaining days for every FDR.
+
+Use the actual current date for date calculations.
+
+Support demo-date simulation so that users can demonstrate
+different maturity scenarios without changing system data.
+
+ALERT SCHEDULE:
+
+- 30 days before maturity.
+- 15 days before maturity.
+- 7 days before maturity.
+- On maturity date.
+- After maturity when action is pending.
+
+Implement a demo notification scheduler or simulated
+trigger action.
+
+Allow an administrator to manually trigger a reminder
+for demonstration purposes.
+
+Prevent duplicate notifications for the same event.
+
+IMPORTANT:
+A matured FDR is not automatically considered invalid,
+renewed or released. Preserve separate financial,
+verification and administrative statuses.
+
+==================================================
+11. RENEWAL AND REPLACEMENT MODULE
+==================================================
+
+Build a complete FDR renewal management workflow.
+
+INSTITUTION FEATURES:
+
+- View FDRs requiring renewal.
+- Select original FDR.
+- Submit renewal details.
+- Upload new FDR.
+- Enter new maturity date.
+- Enter new deposit amount.
+- Enter new FDR number.
+- Submit renewal.
+
+AICTE FEATURES:
+
+- View renewal requests.
+- Compare old and new FDR.
+- Review documents.
+- Check information.
+- Record observations.
+- Approve renewal.
+- Reject renewal.
+- Request additional documents.
+
+Maintain a visual renewal history.
+
+Example:
+
+Original FDR
+   |
+Renewal 1
+   |
+Replacement FDR
+   |
+Current Active Instrument
+
+The original FDR must never disappear.
+
+Maintain all previous records and their relationships.
+
+==================================================
+12. RELEASE AND REFUND MODULE
+==================================================
+
+Create a complete release/refund request workflow.
+
+INSTITUTION:
+
+- View eligible instruments in demo mode.
+- Select FDR.
+- Enter release/refund reason.
+- Upload supporting documents.
+- Submit request.
+- Track status.
+
+AICTE:
+
+- View all requests.
+- Review documents.
+- View associated FDR.
+- Record observations.
+- Request more documents.
+- Forward to senior authority.
+- Approve.
+- Reject with reason.
+- Record final processing details.
+
+WORKFLOW:
+
+SUBMITTED
+UNDER_DOCUMENT_REVIEW
+ELIGIBILITY_SCRUTINY
+PENDING_AUTHORITY_APPROVAL
+APPROVED
+REJECTED
+RELEASE_PROCESSING
+RELEASED
+COMPLETED
+
+Also support:
+- More information requested.
+- On hold.
+- Withdrawn.
+
+Create a visual workflow timeline.
+
+Every decision must have:
+- Officer name.
+- Timestamp.
+- Action.
+- Remarks.
+- Reason where applicable.
+
+Use demo eligibility rules only.
+Clearly label them as configurable demonstration rules.
+
+Do not simulate an actual financial transfer.
+
+==================================================
+13. NOTIFICATION CENTRE
+==================================================
+
+Create a central notification system.
+
+Notification types:
+
+- New FDR submitted.
+- FDR verification completed.
+- Discrepancy found.
+- Additional documents requested.
+- Maturity approaching.
+- FDR matured.
+- Renewal required.
+- Renewal submitted.
+- Refund request submitted.
+- Refund request approved.
+- Refund request rejected.
+- Pending officer action.
+- Overdue case.
+
+Features:
+
+- Notification dropdown.
+- Full notification centre.
+- Read/unread status.
+- Mark all as read.
+- Filter by notification type.
+- Filter by date.
+- Related record navigation.
+- Notification history.
+
+Notifications must be generated from actual demo
+workflow actions.
+
+==================================================
+14. DASHBOARD AND ANALYTICS
+==================================================
+
+Build a premium administrative dashboard.
+
+AICTE DASHBOARD:
+
+Display metric cards:
+
+- Total institutions.
+- Total FDRs.
+- Total deposit value.
+- Active FDRs.
+- Expiring FDRs.
+- Matured FDRs.
+- Pending verification.
+- Discrepancies.
+- Renewal pending.
+- Pending release/refund requests.
+
+Add charts:
+
+1. FDR status distribution.
+2. Bank-wise deposit distribution.
+3. Monthly FDR submissions.
+4. Maturity timeline.
+5. State-wise institution distribution.
+6. Verification outcome distribution.
+7. Renewal trends.
+
+Add:
+- Recent submissions.
+- Urgent maturity alerts.
+- Critical discrepancies.
+- Pending officer actions.
+- Recent activity.
+
+INSTITUTION DASHBOARD:
+
+Display:
+- My total FDRs.
+- Total deposit amount.
+- Active instruments.
+- Expiring instruments.
+- Pending verification.
+- Renewal pending.
+- Release/refund requests.
+
+IMPORTANT:
+
+All statistics and charts must be derived from the
+same demo dataset and update when records change.
+
+Do not hardcode dashboard numbers independently.
+
+==================================================
+15. REPORTS AND EXPORTS
+==================================================
+
+Create a comprehensive reports section.
+
+Report categories:
+
+- Institution-wise FDR report.
+- Bank-wise deposit report.
+- Active FDR report.
+- Expiring FDR report.
+- Matured FDR report.
+- Renewal report.
+- Discrepancy report.
+- Pending verification report.
+- Release/refund report.
+- Overdue action report.
+
+Provide filters and export options.
+
+Implement CSV export.
+
+Implement PDF export if the required library is available.
+
+Include report generation date and filter details.
+
+Ensure reports respect role permissions.
+
+==================================================
+16. AUDIT LOGS AND ACTIVITY HISTORY
+==================================================
+
+Create an audit log module.
+
+Record:
+
+- FDR creation.
+- FDR modification.
+- Document uploads.
+- Document replacement.
+- Verification.
+- Discrepancy detection.
+- Discrepancy resolution.
+- Renewal submission.
+- Renewal approval.
+- Refund submission.
+- Refund approval/rejection.
+- Status changes.
+- User actions.
+
+Display:
+
+- User.
+- Role.
+- Action.
+- Related entity.
+- Date and time.
+- Previous value.
+- New value.
+- Description.
+
+Provide:
+- Search.
+- Filters.
+- Date range.
+- Entity filters.
+- User filters.
+- Activity details.
+
+Audit records must not be editable by ordinary users.
+
+For demo mode, prevent deletion through the interface
+and use append-only audit events.
+
+==================================================
+17. USER AND ROLE MANAGEMENT
+==================================================
+
+Build user management.
+
+Features:
+
+- View users.
+- Create demo users.
+- Assign roles.
+- Associate institution.
+- Activate/deactivate users.
+- View last activity.
+- View assigned permissions.
+- Search and filter users.
+
+Add a demo role-switcher for judges to experience
+different perspectives.
+
+The role-switcher must be clearly labelled DEMO MODE
+and must never be presented as production authentication.
+
+==================================================
+18. SYSTEM SETTINGS
+==================================================
+
+Create settings pages for:
+
+- Organization details.
+- Maturity reminder intervals.
+- Notification preferences.
+- Workflow configuration.
+- Document categories.
+- Deposit categories.
+- Demo data management.
+- Role permissions.
+- System activity.
+
+Allow administrators to change reminder intervals
+and see the effects in the maturity module.
+
+==================================================
+19. DEMO DATA AND INTERACTIVE SIMULATION
+==================================================
+
+This is a demonstration prototype, so create a realistic,
+coherent sample dataset.
+
+Seed:
+
+- 20 Indian technical institutions.
+- 50 FDR records.
+- 8 different issuing banks.
+- 10 pending verifications.
+- 8 discrepancies.
+- 8 expiring FDRs.
+- 6 matured FDRs.
+- 8 renewal records.
+- 5 release/refund requests.
+- 20 notifications.
+- 30 audit events.
+
+Use realistic Indian institution names, bank names,
+Indian currency formatting and dates.
+
+Use different states and districts.
+
+Include multiple maturity scenarios.
+
+Ensure relationships between institutions, FDRs,
+documents, renewals, discrepancies and requests
+are consistent.
+
+Do not generate random inconsistent data every time
+the page loads.
+
+Seed data should remain stable until explicitly reset.
+
+Provide:
+
+- Reset demo data.
+- Load sample data.
+- Create sample discrepancy.
+- Simulate bank verification.
+- Simulate maturity alert.
+- Simulate renewal.
+- Simulate release/refund workflow.
+
+All simulation features must have visible DEMO labels.
+
+==================================================
+20. UI AND USER EXPERIENCE REQUIREMENTS
+==================================================
+
+Maintain the existing design system.
+
+The interface must feel like a premium government
+financial administration portal.
+
+DESIGN DIRECTION:
+
+- Deep navy blue.
+- White backgrounds.
+- Light slate surfaces.
+- Subtle teal accents.
+- Professional typography.
+- Clean sidebar.
+- Structured tables.
+- Consistent spacing.
+- Clear status badges.
+- Minimal and meaningful animations.
+
+Ensure:
+
+- Fully responsive layout.
+- Desktop-first administration interface.
+- Tablet and mobile support.
+- Consistent page headers.
+- Breadcrumbs.
+- Loading skeletons.
+- Empty states.
+- Error states.
+- Confirmation dialogs.
+- Success notifications.
+- Toast messages.
+- Accessible form labels.
+- Consistent date formatting.
+- Indian currency formatting.
+
+Avoid:
+- Excessive gradients.
+- Oversized cards.
+- Unnecessary animations.
+- Generic landing page sections.
+- Decorative charts with fake values.
+- Nonfunctional buttons.
+- Placeholder navigation pages.
+
+==================================================
+21. FUNCTIONALITY REQUIREMENTS
+==================================================
+
+THIS IS EXTREMELY IMPORTANT.
+
+Every visible interactive element must work.
+
+Do not create buttons that do nothing.
+
+Every:
+- Add button.
+- Edit button.
+- Delete/archive button.
+- Submit button.
+- Approve button.
+- Reject button.
+- Search field.
+- Filter.
+- Dropdown.
+- Tab.
+- Modal.
+- Notification.
+- Export button.
+- Document preview.
+- Navigation link.
+
+must perform its intended action.
+
+When a user submits or updates data:
+
+1. Validate the input.
+2. Execute the action.
+3. Update the central data store.
+4. Refresh related tables.
+5. Refresh dashboard metrics.
+6. Update relevant status.
+7. Generate appropriate notification.
+8. Record an audit event.
+9. Display success or error feedback.
+
+Use a centralized state/data management approach.
+
+All related modules must use consistent records.
+
+For demo mode, persist data across page reloads
+using the existing database or an appropriate
+browser-persistent storage fallback.
+
+Never let one page display a different status from
+another page for the same record.
+
+==================================================
+22. FINAL TESTING AND QUALITY ASSURANCE
+==================================================
+
+After implementation, perform a complete application audit.
+
+TEST THE FOLLOWING:
+
+1. Login and role switching.
+2. Institution creation and editing.
+3. FDR submission.
+4. Document upload and preview.
+5. FDR search and filtering.
+6. FDR details.
+7. AI extraction simulation.
+8. Discrepancy creation and resolution.
+9. Simulated bank verification.
+10. Maturity calculations.
+11. Maturity alerts.
+12. Renewal submission and approval.
+13. Replacement FDR linking.
+14. Release/refund submission.
+15. Release/refund approval and rejection.
+16. Notifications.
+17. Dashboard updates.
+18. Charts.
+19. CSV/PDF exports.
+20. Audit logs.
+21. User management.
+22. Demo data reset.
+
+Fix:
+- TypeScript errors.
+- Runtime errors.
+- Broken routes.
+- Missing components.
+- Nonfunctional buttons.
+- Incorrect calculations.
+- Inconsistent statuses.
+- Broken responsive layouts.
+- Invalid navigation.
+- Data persistence issues.
+
+Do not remove features to make testing easier.
+
+==================================================
+FINAL EXPECTATION
+==================================================
+
+The final output must be a complete, polished,
+fully interactive AICTE Security Deposit/FDR
+Management System prototype.
+
+It must contain both Institution and AICTE portals.
+
+It must demonstrate the entire FDR lifecycle:
+
+INSTITUTION REGISTRATION
+        |
+FDR SUBMISSION
+        |
+DOCUMENT UPLOAD
+        |
+AI-ASSISTED EXTRACTION
+        |
+VERIFICATION
+        |
+ACTIVE FDR MONITORING
+        |
+MATURITY ALERT
+        |
+RENEWAL / REPLACEMENT
+        |
+RELEASE / REFUND REQUEST
+        |
+AUTHORIZED REVIEW
+        |
+FINAL STATUS AND AUDIT HISTORY
+
+The prototype must be demonstrable from beginning
+to end using realistic sample data.
+
+IMPORTANT EXECUTION INSTRUCTION:
+
+Work systematically on the existing project.
+
+First inspect the codebase and identify what already exists.
+
+Implement the missing modules and connect them to the
+existing foundation.
+
+Prioritize complete working functionality over creating
+more static screens.
+
+Do not stop after generating UI components.
+
+Run the application, inspect the preview, fix errors
+and verify the main user workflows.
+
+Do not claim completion for functionality that has
+not actually been implemented.
+
+Deliver a cohesive, professional and fully working
+demonstration prototype.

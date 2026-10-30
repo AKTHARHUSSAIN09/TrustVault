@@ -1,0 +1,396 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 1: Global Default-Deny Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isBootstrappedSuperAdmin() {
+      return isVerifiedUser() && request.auth.token.email == 'akthar0109@gmail.com';
+    }
+
+    function isAdmin() {
+      return isBootstrappedSuperAdmin() || (
+        isVerifiedUser() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in [
+          'SUPER_ADMIN',
+          'AICTE_ADMIN',
+          'AICTE_SCRUTINY_OFFICER',
+          'SENIOR_APPROVING_OFFICER'
+        ]
+      );
+    }
+
+    // Validation Blueprints
+    function isValidUserProfile(data) {
+      return data.keys().hasAll([
+        'uid', 'email', 'displayName', 'role', 'institutionId',
+        'institutionName', 'department', 'status', 'orgId', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'uid', 'email', 'displayName', 'role', 'institutionId',
+        'institutionName', 'department', 'status', 'orgId', 'createdAt', 'updatedAt'
+      ]) &&
+      data.uid is string && data.uid.size() >= 1 && data.uid.size() <= 128 && data.uid.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.email is string && data.email.size() >= 3 && data.email.size() <= 256 &&
+      data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 128 &&
+      data.role is string && data.role.size() <= 64 && data.role in [
+        'SUPER_ADMIN', 'AICTE_ADMIN', 'AICTE_SCRUTINY_OFFICER', 'SENIOR_APPROVING_OFFICER', 'INSTITUTION_ADMIN'
+      ] &&
+      data.institutionId is string && data.institutionId.size() <= 128 &&
+      data.institutionName is string && data.institutionName.size() <= 256 &&
+      data.department is string && data.department.size() <= 128 &&
+      data.status is string && data.status.size() <= 32 && data.status in ['ACTIVE', 'SUSPENDED', 'PENDING'] &&
+      data.orgId is string && data.orgId.size() >= 1 && data.orgId.size() <= 64 &&
+      data.createdAt is string && data.createdAt.size() <= 64 &&
+      data.updatedAt is string && data.updatedAt.size() <= 64;
+    }
+
+    function isValidInstitution(data) {
+      return data.keys().hasAll([
+        'institutionId', 'aictePermanentId', 'name', 'state', 'region',
+        'category', 'institutionType', 'contactEmail', 'contactPhone',
+        'address', 'complianceStatus', 'ownerUid', 'orgId', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'institutionId', 'aictePermanentId', 'name', 'state', 'region',
+        'category', 'institutionType', 'contactEmail', 'contactPhone',
+        'address', 'complianceStatus', 'ownerUid', 'orgId', 'createdAt', 'updatedAt'
+      ]) &&
+      data.institutionId is string && data.institutionId.size() >= 1 && data.institutionId.size() <= 128 && data.institutionId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.aictePermanentId is string && data.aictePermanentId.size() >= 1 && data.aictePermanentId.size() <= 64 &&
+      data.name is string && data.name.size() >= 2 && data.name.size() <= 256 &&
+      data.state is string && data.state.size() >= 2 && data.state.size() <= 128 &&
+      data.region is string && data.region.size() <= 32 && data.region in [
+        'NORTH', 'SOUTH', 'EAST', 'WEST', 'CENTRAL', 'SOUTH_WEST', 'NORTH_WEST', 'SOUTH_CENTRAL'
+      ] &&
+      data.category is string && data.category.size() <= 32 && data.category in [
+        'ENGINEERING', 'MANAGEMENT', 'PHARMACY', 'ARCHITECTURE', 'MCA', 'HOTEL_MANAGEMENT'
+      ] &&
+      data.institutionType is string && data.institutionType.size() <= 32 && data.institutionType in [
+        'PRIVATE_SELF_FINANCED', 'DEEMED_UNIVERSITY', 'GOVT_AIDED', 'AUTONOMOUS'
+      ] &&
+      data.contactEmail is string && data.contactEmail.size() <= 256 &&
+      data.contactPhone is string && data.contactPhone.size() <= 32 &&
+      data.address is string && data.address.size() <= 512 &&
+      data.complianceStatus is string && data.complianceStatus.size() <= 32 && data.complianceStatus in [
+        'COMPLIANT', 'AT_RISK', 'NON_COMPLIANT', 'PENDING_SCRUTINY'
+      ] &&
+      data.ownerUid is string && data.ownerUid.size() >= 1 && data.ownerUid.size() <= 128 &&
+      data.orgId is string && data.orgId.size() >= 1 && data.orgId.size() <= 64 &&
+      data.createdAt is string && data.createdAt.size() <= 64 &&
+      data.updatedAt is string && data.updatedAt.size() <= 64;
+    }
+
+    function isValidFdrRecord(data) {
+      return data.keys().hasAll([
+        'fdrId', 'fdrNumber', 'institutionId', 'institutionName', 'aictePermanentId',
+        'bankName', 'branchName', 'ifscCode', 'principalAmount', 'maturityAmount',
+        'interestRate', 'issueDate', 'maturityDate', 'programCategory',
+        'jointHolderStatus', 'status', 'documentName', 'documentUrl',
+        'remarks', 'ownerUid', 'orgId', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'fdrId', 'fdrNumber', 'institutionId', 'institutionName', 'aictePermanentId',
+        'bankName', 'branchName', 'ifscCode', 'principalAmount', 'maturityAmount',
+        'interestRate', 'issueDate', 'maturityDate', 'programCategory',
+        'jointHolderStatus', 'status', 'documentName', 'documentUrl',
+        'remarks', 'ownerUid', 'orgId', 'createdAt', 'updatedAt'
+      ]) &&
+      data.fdrId is string && data.fdrId.size() >= 1 && data.fdrId.size() <= 128 && data.fdrId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.fdrNumber is string && data.fdrNumber.size() >= 1 && data.fdrNumber.size() <= 64 &&
+      data.institutionId is string && data.institutionId.size() >= 1 && data.institutionId.size() <= 128 &&
+      data.institutionName is string && data.institutionName.size() >= 1 && data.institutionName.size() <= 256 &&
+      data.aictePermanentId is string && data.aictePermanentId.size() <= 64 &&
+      data.bankName is string && data.bankName.size() >= 1 && data.bankName.size() <= 256 &&
+      data.branchName is string && data.branchName.size() <= 256 &&
+      data.ifscCode is string && data.ifscCode.size() <= 32 &&
+      data.principalAmount is number && data.principalAmount >= 0 &&
+      data.maturityAmount is number && data.maturityAmount >= 0 &&
+      data.interestRate is number && data.interestRate >= 0 && data.interestRate <= 100 &&
+      data.issueDate is string && data.issueDate.size() <= 32 &&
+      data.maturityDate is string && data.maturityDate.size() <= 32 &&
+      data.programCategory is string && data.programCategory.size() <= 128 &&
+      data.jointHolderStatus is string && data.jointHolderStatus.size() <= 32 && data.jointHolderStatus in [
+        'JOINT_WITH_AICTE', 'SOLE_INSTITUTION', 'UNDER_LIEN_VERIFICATION'
+      ] &&
+      data.status is string && data.status.size() <= 32 && data.status in [
+        'SUBMITTED', 'UNDER_SCRUTINY', 'VERIFIED_ACTIVE', 'DISCREPANCY_RAISED',
+        'MATURING_SOON', 'MATURED', 'RENEWAL_INITIATED', 'RELEASE_REQUESTED', 'RELEASED'
+      ] &&
+      data.documentName is string && data.documentName.size() <= 256 &&
+      data.documentUrl is string && data.documentUrl.size() <= 1024 &&
+      data.remarks is string && data.remarks.size() <= 1024 &&
+      data.ownerUid is string && data.ownerUid.size() >= 1 && data.ownerUid.size() <= 128 &&
+      data.orgId is string && data.orgId.size() >= 1 && data.orgId.size() <= 64 &&
+      data.createdAt is string && data.createdAt.size() <= 64 &&
+      data.updatedAt is string && data.updatedAt.size() <= 64;
+    }
+
+    function isValidWorkflowSubmission(data) {
+      return data.keys().hasAll([
+        'submissionId', 'referenceNo', 'submissionType', 'fdrId', 'fdrNumber',
+        'institutionId', 'institutionName', 'amount', 'bankName', 'status',
+        'assignedRole', 'notes', 'ownerUid', 'orgId', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'submissionId', 'referenceNo', 'submissionType', 'fdrId', 'fdrNumber',
+        'institutionId', 'institutionName', 'amount', 'bankName', 'status',
+        'assignedRole', 'notes', 'ownerUid', 'orgId', 'createdAt', 'updatedAt'
+      ]) &&
+      data.submissionId is string && data.submissionId.size() >= 1 && data.submissionId.size() <= 128 && data.submissionId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.referenceNo is string && data.referenceNo.size() >= 1 && data.referenceNo.size() <= 64 &&
+      data.submissionType is string && data.submissionType.size() <= 32 && data.submissionType in [
+        'NEW_FDR', 'RENEWAL', 'REPLACEMENT', 'RELEASE_REFUND', 'DISCREPANCY_RESPONSE'
+      ] &&
+      data.fdrId is string && data.fdrId.size() <= 128 &&
+      data.fdrNumber is string && data.fdrNumber.size() <= 64 &&
+      data.institutionId is string && data.institutionId.size() <= 128 &&
+      data.institutionName is string && data.institutionName.size() <= 256 &&
+      data.amount is number && data.amount >= 0 &&
+      data.bankName is string && data.bankName.size() <= 256 &&
+      data.status is string && data.status.size() <= 32 && data.status in [
+        'SUBMITTED', 'SCRUTINY_IN_PROGRESS', 'DISCREPANCY_FLAGGED', 'FORWARDED_TO_SENIOR', 'APPROVED', 'REJECTED'
+      ] &&
+      data.assignedRole is string && data.assignedRole.size() <= 64 && data.assignedRole in [
+        'AICTE_SCRUTINY_OFFICER', 'SENIOR_APPROVING_OFFICER', 'AICTE_ADMIN'
+      ] &&
+      data.notes is string && data.notes.size() <= 1024 &&
+      data.ownerUid is string && data.ownerUid.size() >= 1 && data.ownerUid.size() <= 128 &&
+      data.orgId is string && data.orgId.size() >= 1 && data.orgId.size() <= 64 &&
+      data.createdAt is string && data.createdAt.size() <= 64 &&
+      data.updatedAt is string && data.updatedAt.size() <= 64;
+    }
+
+    function isValidAuditLog(data) {
+      return data.keys().hasAll([
+        'logId', 'actorUid', 'actorEmail', 'actorRole', 'action',
+        'module', 'targetId', 'summary', 'orgId', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'logId', 'actorUid', 'actorEmail', 'actorRole', 'action',
+        'module', 'targetId', 'summary', 'orgId', 'createdAt'
+      ]) &&
+      data.logId is string && data.logId.size() >= 1 && data.logId.size() <= 128 && data.logId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.actorUid is string && data.actorUid.size() >= 1 && data.actorUid.size() <= 128 &&
+      data.actorEmail is string && data.actorEmail.size() <= 256 &&
+      data.actorRole is string && data.actorRole.size() <= 64 &&
+      data.action is string && data.action.size() <= 128 &&
+      data.module is string && data.module.size() <= 128 &&
+      data.targetId is string && data.targetId.size() <= 128 &&
+      data.summary is string && data.summary.size() <= 512 &&
+      data.orgId is string && data.orgId.size() >= 1 && data.orgId.size() <= 64 &&
+      data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidNotification(data) {
+      return data.keys().hasAll([
+        'notificationId', 'title', 'message', 'severity', 'category',
+        'targetRole', 'recipientUid', 'readStatus', 'orgId', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'notificationId', 'title', 'message', 'severity', 'category',
+        'targetRole', 'recipientUid', 'readStatus', 'orgId', 'createdAt'
+      ]) &&
+      data.notificationId is string && data.notificationId.size() >= 1 && data.notificationId.size() <= 128 && data.notificationId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.title is string && data.title.size() >= 1 && data.title.size() <= 256 &&
+      data.message is string && data.message.size() >= 1 && data.message.size() <= 1024 &&
+      data.severity is string && data.severity.size() <= 32 && data.severity in ['INFO', 'WARNING', 'CRITICAL', 'SUCCESS'] &&
+      data.category is string && data.category.size() <= 32 && data.category in [
+        'MATURITY_ALERT', 'SCRUTINY_UPDATE', 'DISCREPANCY', 'RELEASE_APPROVAL', 'SYSTEM'
+      ] &&
+      data.targetRole is string && data.targetRole.size() <= 64 &&
+      data.recipientUid is string && data.recipientUid.size() <= 128 &&
+      data.readStatus is bool &&
+      data.orgId is string && data.orgId.size() >= 1 && data.orgId.size() <= 64 &&
+      data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidSystemConfig(data) {
+      return data.keys().hasAll([
+        'configId', 'maturityAlertWindowDays', 'defaultLockInYears',
+        'requireJointLienVerification', 'allowedBankCategories',
+        'escalationSlaHours', 'portalMaintenanceBanner', 'updatedByUid', 'orgId', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'configId', 'maturityAlertWindowDays', 'defaultLockInYears',
+        'requireJointLienVerification', 'allowedBankCategories',
+        'escalationSlaHours', 'portalMaintenanceBanner', 'updatedByUid', 'orgId', 'updatedAt'
+      ]) &&
+      data.configId is string && data.configId.size() >= 1 && data.configId.size() <= 128 && data.configId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.maturityAlertWindowDays is number && data.maturityAlertWindowDays >= 1 && data.maturityAlertWindowDays <= 365 &&
+      data.defaultLockInYears is number && data.defaultLockInYears >= 1 && data.defaultLockInYears <= 30 &&
+      data.requireJointLienVerification is bool &&
+      data.allowedBankCategories is string && data.allowedBankCategories.size() <= 256 &&
+      data.escalationSlaHours is number && data.escalationSlaHours >= 1 && data.escalationSlaHours <= 720 &&
+      data.portalMaintenanceBanner is string && data.portalMaintenanceBanner.size() <= 512 &&
+      data.updatedByUid is string && data.updatedByUid.size() <= 128 &&
+      data.orgId is string && data.orgId.size() >= 1 && data.orgId.size() <= 64 &&
+      data.updatedAt is string && data.updatedAt.size() <= 64;
+    }
+
+    // Connection test collection (read-only verification)
+    match /test/{docId} {
+      allow get: if isValidId(docId);
+      allow list, create, update, delete: if false;
+    }
+
+    // 1. Users Collection (PII Isolated to Owner or Admin)
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isSignedIn() && (resource.data.uid == request.auth.uid || (isBootstrappedSuperAdmin() && resource.data.orgId == 'AICTE') || (isVerifiedUser() && resource.data.orgId == 'AICTE'));
+      allow create: if isVerifiedUser() && isValidId(userId) && isValidUserProfile(incoming()) &&
+        incoming().uid == userId && (
+          isAdmin() || (
+            isOwner(userId) && (
+              incoming().role == 'INSTITUTION_ADMIN' || isBootstrappedSuperAdmin()
+            )
+          )
+        );
+      allow update: if isVerifiedUser() && isValidId(userId) && isValidUserProfile(incoming()) &&
+        incoming().uid == existing().uid &&
+        incoming().createdAt == existing().createdAt && (
+          isAdmin() || (
+            isOwner(userId) &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'displayName', 'department', 'institutionName', 'institutionId', 'role', 'updatedAt'
+            ]) && (
+              incoming().role == existing().role || isBootstrappedSuperAdmin() || existing().email == 'akthar0109@gmail.com'
+            )
+          )
+        );
+      allow delete: if isVerifiedUser() && isValidId(userId) && isAdmin();
+    }
+
+    // 2. Institutions Collection
+    match /institutions/{institutionId} {
+      allow get: if isSignedIn() && isValidId(institutionId) && (existing().ownerUid == request.auth.uid || existing().orgId == 'AICTE' || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerUid == request.auth.uid || resource.data.orgId == 'AICTE');
+      allow create: if isVerifiedUser() && isValidId(institutionId) && isValidInstitution(incoming()) &&
+        incoming().institutionId == institutionId &&
+        (incoming().ownerUid == request.auth.uid || isAdmin());
+      allow update: if isVerifiedUser() && isValidId(institutionId) && isValidInstitution(incoming()) &&
+        incoming().institutionId == existing().institutionId &&
+        incoming().ownerUid == existing().ownerUid &&
+        incoming().createdAt == existing().createdAt && (
+          isAdmin() || (
+            existing().ownerUid == request.auth.uid &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'name', 'state', 'region', 'category', 'institutionType',
+              'contactEmail', 'contactPhone', 'address', 'updatedAt'
+            ])
+          )
+        );
+      allow delete: if isVerifiedUser() && isValidId(institutionId) && isAdmin();
+    }
+
+    // 3. FDR Repository Collection
+    match /fdrs/{fdrId} {
+      allow get: if isSignedIn() && isValidId(fdrId) && (existing().ownerUid == request.auth.uid || existing().orgId == 'AICTE' || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerUid == request.auth.uid || resource.data.orgId == 'AICTE');
+      allow create: if isVerifiedUser() && isValidId(fdrId) && isValidFdrRecord(incoming()) &&
+        incoming().fdrId == fdrId &&
+        (incoming().ownerUid == request.auth.uid || isAdmin());
+      allow update: if isVerifiedUser() && isValidId(fdrId) && isValidFdrRecord(incoming()) &&
+        incoming().fdrId == existing().fdrId &&
+        incoming().ownerUid == existing().ownerUid &&
+        incoming().createdAt == existing().createdAt && (
+          isAdmin() || (
+            existing().ownerUid == request.auth.uid &&
+            existing().status != 'RELEASED' &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'status', 'remarks', 'documentName', 'documentUrl', 'maturityDate', 'maturityAmount', 'updatedAt'
+            ])
+          )
+        );
+      allow delete: if isVerifiedUser() && isValidId(fdrId) && isAdmin();
+    }
+
+    // 4. Workflow Submissions Collection
+    match /submissions/{submissionId} {
+      allow get: if isSignedIn() && isValidId(submissionId) && (existing().ownerUid == request.auth.uid || existing().orgId == 'AICTE' || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerUid == request.auth.uid || resource.data.orgId == 'AICTE');
+      allow create: if isVerifiedUser() && isValidId(submissionId) && isValidWorkflowSubmission(incoming()) &&
+        incoming().submissionId == submissionId &&
+        (incoming().ownerUid == request.auth.uid || isAdmin());
+      allow update: if isVerifiedUser() && isValidId(submissionId) && isValidWorkflowSubmission(incoming()) &&
+        incoming().submissionId == existing().submissionId &&
+        incoming().ownerUid == existing().ownerUid &&
+        incoming().createdAt == existing().createdAt && (
+          isAdmin() || (
+            existing().ownerUid == request.auth.uid &&
+            existing().status != 'APPROVED' &&
+            existing().status != 'REJECTED' &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['notes', 'status', 'updatedAt'])
+          )
+        );
+      allow delete: if isVerifiedUser() && isValidId(submissionId) && isAdmin();
+    }
+
+    // 5. Audit Logs Collection (Immutable Append-Only)
+    match /auditLogs/{logId} {
+      allow get: if isSignedIn() && isValidId(logId) && (existing().actorUid == request.auth.uid || existing().orgId == 'AICTE' || isAdmin());
+      allow list: if isSignedIn() && (resource.data.actorUid == request.auth.uid || resource.data.orgId == 'AICTE');
+      allow create: if isVerifiedUser() && isValidId(logId) && isValidAuditLog(incoming()) &&
+        incoming().logId == logId &&
+        incoming().actorUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // 6. Notifications Collection
+    match /notifications/{notificationId} {
+      allow get: if isSignedIn() && isValidId(notificationId) && (existing().recipientUid == request.auth.uid || existing().orgId == 'AICTE' || isAdmin());
+      allow list: if isSignedIn() && (resource.data.recipientUid == request.auth.uid || resource.data.orgId == 'AICTE');
+      allow create: if isVerifiedUser() && isValidId(notificationId) && isValidNotification(incoming()) &&
+        incoming().notificationId == notificationId &&
+        (incoming().recipientUid == request.auth.uid || isAdmin());
+      allow update: if isVerifiedUser() && isValidId(notificationId) && isValidNotification(incoming()) &&
+        incoming().notificationId == existing().notificationId &&
+        incoming().createdAt == existing().createdAt && (
+          isAdmin() || (
+            (existing().recipientUid == request.auth.uid || existing().orgId == 'AICTE') &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['readStatus'])
+          )
+        );
+      allow delete: if isVerifiedUser() && isValidId(notificationId) && isAdmin();
+    }
+
+    // 7. System Configuration Collection
+    match /systemConfig/{configId} {
+      allow get: if isSignedIn() && isValidId(configId);
+      allow list: if isSignedIn() && resource.data.orgId == 'AICTE';
+      allow create: if isVerifiedUser() && isValidId(configId) && isValidSystemConfig(incoming()) && isAdmin();
+      allow update: if isVerifiedUser() && isValidId(configId) && isValidSystemConfig(incoming()) &&
+        incoming().configId == existing().configId &&
+        isAdmin();
+      allow delete: if false;
+    }
+  }
+}
